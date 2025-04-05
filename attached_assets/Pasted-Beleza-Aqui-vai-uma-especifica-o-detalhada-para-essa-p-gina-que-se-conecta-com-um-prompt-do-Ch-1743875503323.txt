@@ -1,0 +1,83 @@
+Beleza! Aqui vai uma **especificação detalhada** para essa página que se conecta com um prompt do ChatGPT treinado para responder dúvidas sobre um curso e indicar em qual aula está o conteúdo.
+
+---
+
+## 📝 **Especificação da Página: Assistente de Dúvidas do Curso**
+
+### 🎯 **Objetivo**
+Permitir que o aluno digite dúvidas sobre um curso, receba uma resposta instantânea utilizando o ChatGPT e veja em qual aula do curso aquele conteúdo está abordado.
+
+---
+
+### 🧩 **Funcionalidades**
+
+#### 1. **Campo de Pergunta**
+- Um campo de texto para o aluno escrever sua dúvida.
+- Placeholder: _"Digite sua dúvida sobre o curso aqui..."_
+- Botão de envio: **“Perguntar”**.
+
+#### 2. **Resposta da IA**
+- Exibe a **resposta do ChatGPT** com linguagem clara e objetiva.
+- Mostra também a **aula ou aulas** relacionadas ao conteúdo da dúvida.
+  - Exemplo:  
+    _"Esse conteúdo é abordado na Aula 03 - Introdução ao JavaScript."_
+
+#### 3. **Histórico de perguntas**
+- Opcional: manter na página as últimas perguntas feitas pelo aluno, para facilitar consultas repetidas.
+
+#### 4. **Feedback**
+- Botões "👍 / 👎" abaixo da resposta, perguntando: _"Essa resposta foi útil?"_
+- Se o aluno clicar em "👎", abre uma caixinha para ele sugerir melhorias.
+
+---
+
+### 📱 **Layout (Desktop e Mobile)**
+
+#### Topo:
+- Título: **Assistente Virtual do Curso**
+- Subtítulo (opcional): _Tire suas dúvidas sobre o conteúdo do curso com nosso assistente inteligente._
+
+#### Corpo:
+- Caixa de pergunta + botão “Perguntar”.
+- Área para exibir a resposta do ChatGPT e aula relacionada.
+- Lista de perguntas/respostas anteriores (scrollável).
+
+---
+
+### ⚙️ **Lógica de Funcionamento (Backend/Prompt)**
+
+1. **Entrada do usuário (pergunta)** é enviada via API para o ChatGPT.
+2. O **prompt** utilizado no modelo já foi treinado para:
+   - Responder dúvidas sobre o conteúdo do curso.
+   - Informar **qual aula trata do assunto** (usando uma estrutura interna com resumo por aula, por exemplo).
+3. A **resposta retornada** vem no seguinte formato:
+   - Texto da resposta.
+   - Nome/número da aula relacionada.
+4. O front-end **exibe a resposta e a aula** para o usuário.
+
+---
+
+### 📦 **Exemplo de Resposta na Interface**
+> **Resposta:**  
+> "A função `map()` é usada para transformar arrays. Cada elemento é modificado conforme a função fornecida."
+>  
+> **Conteúdo relacionado:**  
+> Aula 05 - Métodos de Arrays em JavaScript
+
+---
+
+### 🔒 **Outros pontos importantes**
+- **Autenticação (opcional):** garantir que só alunos inscritos tenham acesso.
+- **Taxa de uso:** limitar número de perguntas por hora/dia, se necessário.
+- **Design acessível e responsivo.**
+
+---
+
+### 🔌 **Requisitos Técnicos**
+- **Front-end:** HTML + CSS (Tailwind, Bootstrap, ou framework usado no projeto) + JavaScript.
+- **Back-end:** Endpoint para conectar com a API do ChatGPT (via OpenAI API ou outro serviço).
+- **Estrutura do curso:** JSON, banco de dados ou estrutura embutida no prompt com informações das aulas.
+
+---
+
+Se quiser, posso te ajudar com o **protótipo visual** ou com o **código inicial** da interface e da integração com a API. Quer?
