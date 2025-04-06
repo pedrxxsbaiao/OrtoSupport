@@ -82,10 +82,10 @@ export default function Home() {
         {/* Header */}
         <header className="text-center mb-8">
           <h1 className="text-2xl sm:text-3xl font-bold text-primary mb-2">
-            Assistente Virtual do Curso
+            Professor OFM - Assistente Virtual
           </h1>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            Tire suas dúvidas sobre o conteúdo do curso com nosso assistente inteligente.
+            Tire suas dúvidas sobre Ortodontia Funcional dos Maxilares com nosso assistente especializado.
           </p>
         </header>
         

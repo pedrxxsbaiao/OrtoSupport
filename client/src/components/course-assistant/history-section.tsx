@@ -29,7 +29,7 @@ export default function HistorySection({ questions }: HistorySectionProps) {
     <div className="mt-8">
       <div className="border-b border-gray-200 mb-6">
         <h2 className="text-xl font-semibold text-gray-800 pb-2">
-          Histórico de perguntas
+          Histórico de Dúvidas - OFM
         </h2>
       </div>
 

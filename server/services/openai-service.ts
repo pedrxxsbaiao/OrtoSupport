@@ -6,32 +6,42 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY || "your-api-key"
 });
 
-// Course structure with lesson details - in a real application this would come from a database
+// Course structure with lesson details for OFM (Ortodontia Funcional dos Maxilares)
 const courseStructure = [
   { 
     id: 1, 
-    title: "Aula 01 - Introdução à Programação",
-    topics: ["Conceitos básicos de programação", "Algoritmos", "Lógica de programação"]
+    title: "Aula 01 - Introdução à Ortodontia Funcional dos Maxilares",
+    topics: ["História da OFM", "Princípios básicos", "Diferenças entre Ortodontia Convencional e OFM"]
   },
   { 
     id: 2, 
-    title: "Aula 02 - Variáveis e Tipos de Dados em JavaScript",
-    topics: ["var, let e const", "Tipos primitivos", "Strings, Numbers, Booleans", "Operadores"]
+    title: "Aula 02 - Diagnóstico em OFM",
+    topics: ["Anamnese", "Exame clínico", "Documentação ortodôntica", "Análise cefalométrica funcional"]
   },
   { 
     id: 3, 
-    title: "Aula 03 - Estruturas de Controle",
-    topics: ["Condicionais (if, else, switch)", "Loops (for, while, do-while)", "Break e continue"]
+    title: "Aula 03 - Classificação das Maloclusões",
+    topics: ["Classe I", "Classe II divisão 1", "Classe II divisão 2", "Classe III", "Mordida aberta", "Mordida cruzada"]
   },
   { 
     id: 4, 
-    title: "Aula 04 - Funções em JavaScript",
-    topics: ["Declaração de funções", "Arrow functions", "Parâmetros e retorno", "Callbacks"]
+    title: "Aula 04 - Aparelhos Funcionais",
+    topics: ["Princípios de ação", "Pistas diretas", "SN1, SN2, SN3", "Bimler", "Planas", "Simões Network"]
   },
   { 
     id: 5, 
-    title: "Aula 05 - Métodos de Arrays em JavaScript",
-    topics: ["map()", "filter()", "reduce()", "forEach()", "find() e findIndex()"]
+    title: "Aula 05 - Tratamento Precoce",
+    topics: ["Tratamento preventivo", "Interceptivo", "Correção de hábitos deletérios", "Expansão maxilar"]
+  },
+  { 
+    id: 6, 
+    title: "Aula 06 - Tratamento da Classe II",
+    topics: ["Aparelhos para Classe II", "Ativadores", "Bionator", "Twin Block", "Herbst", "Jasper Jumper"]
+  },
+  { 
+    id: 7, 
+    title: "Aula 07 - Tratamento da Classe III",
+    topics: ["Aparelhos para Classe III", "Frankel III", "Máscara facial", "Mentoneira", "Expansão associada"]
   }
 ];
 
@@ -39,8 +49,11 @@ export async function askQuestion(question: string): Promise<AskQuestionResponse
   try {
     // Build a system prompt with course structure information
     const systemPrompt = `
-      Você é um assistente especializado para o curso de JavaScript. 
-      Responda perguntas dos alunos de forma clara e objetiva.
+      Você é o Professor OFM, especialista em Ortodontia Funcional dos Maxilares. 
+      Seu papel é responder dúvidas dos alunos com base no conteúdo do curso de OFM.
+      
+      Responda com linguagem técnica apropriada para profissionais de odontologia, mas de forma clara e didática.
+      Sempre que possível, mencione referências científicas e evidências clínicas.
       
       IMPORTANTE: Após responder a pergunta, você DEVE identificar em qual aula do curso esse conteúdo é abordado.
       Indique apenas UMA aula mais relevante relacionada à pergunta.
@@ -53,7 +66,7 @@ export async function askQuestion(question: string): Promise<AskQuestionResponse
       Responda no formato JSON com os seguintes campos:
       {
         "answer": "Sua resposta detalhada aqui",
-        "lesson": "Título completo da aula mais relevante (ex: Aula 05 - Métodos de Arrays em JavaScript)"
+        "lesson": "Título completo da aula mais relevante (ex: Aula 03 - Classificação das Maloclusões)"
       }
     `;
 

@@ -37,7 +37,7 @@ export default function QuestionInput({ onSubmit }: QuestionInputProps) {
             <Textarea
               id="question"
               rows={3}
-              placeholder="Digite sua dúvida sobre o curso aqui..."
+              placeholder="Digite sua dúvida sobre Ortodontia Funcional dos Maxilares aqui..."
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
               className="w-full resize-none focus:ring-primary focus:border-primary"
