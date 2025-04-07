@@ -45,6 +45,39 @@ const courseStructure = [
   }
 ];
 
+// Conteúdo do material do curso OFM
+const courseContent = {
+  aula1: `
+  Aula 1 - Como funciona a Ortopedia Funcional dos Maxilares
+
+  A Ortopedia Funcional dos Maxilares (OFM) usa aparelhos ortopédicos funcionais para corrigir disfunções maxilomandibulares. Atua no desenvolvimento ósseo, função muscular e oclusão, diferente da ortodontia, que alinha os dentes.
+
+  Objetivos incluem: melhorar mastigação, tratar maloclusões com estímulos funcionais, obter resultados precoces e estáveis, com menos extrações.
+
+  Princípios fundamentais: excitação neural, mudança de postura mandibular, e suporte bimaxilar.
+
+  Indicações: distoclusão, mordida cruzada, mordida aberta funcional, DTM, etc. Contraindicações: pacientes com distúrbios neuromusculares graves, desvios esqueléticos acentuados, falta de colaboração.
+
+  Aparelhos simples permitem movimento livre da mandíbula; compostos guiam a posição mandibular.
+
+  A OFM é complementar à ortodontia, e o planejamento adequado é essencial para o sucesso.
+  `,
+  
+  aula2: `
+  Aula 2 - Mudança de Postura Terapêutica na Ortopedia Funcional dos Maxilares
+
+  A mudança de postura terapêutica ajusta a posição mandibular para corrigir Classe II (distoclusão) ou Classe III (mesiooclusão).
+
+  Etapas: diagnóstico, montagem do modelo com avanço mandibular (DA), confecção do aparelho, instalação e acompanhamento.
+
+  Limite de avanço: máx. 7 mm por vez. Em overjets maiores, usa-se dois aparelhos ou ajustes progressivos.
+
+  Formas de mudança de postura: avanço mandibular, lateralização da mandíbula, bloqueio frontal.
+
+  Benefícios: correção funcional e estrutural, crescimento equilibrado, melhora mastigatória e respiratória.
+  `
+};
+
 export async function askQuestion(question: string): Promise<AskQuestionResponse> {
   try {
     // Usando o assistente personalizado que contém conhecimento em Ortodontia Funcional dos Maxilares
@@ -55,28 +88,20 @@ export async function askQuestion(question: string): Promise<AskQuestionResponse
         { 
           role: "system", 
           content: `Você é o Professor OFM, especialista em Ortodontia Funcional dos Maxilares. 
-Responda com base nos conhecimentos especializados de OFM, contemplando a apostila do curso.
-Se a resposta não estiver no seu conhecimento, diga: 'Essa informação não está disponível no material do curso.'
+Responda com base no CONTEÚDO DAS AULAS abaixo. Se a informação perguntada não estiver contida neste conteúdo, diga: 'Essa informação não está disponível no material do curso.'
 
-Suas respostas devem ser claras, precisas e com o rigor técnico esperado para profissionais de odontologia.
+CONTEÚDO DO CURSO DE OFM:
+${courseContent.aula1}
 
-Responda sobre tópicos como:
-- Tratamento precoce e preventivo em OFM
-- Classificações de Angle (Classe I, II e III)
-- Biomecânica dos aparelhos funcionais 
-- Diagnóstico em OFM
-- Princípios biológicos da OFM
-- Aparelhos como Pistas Diretas, SN, Bimler, Planas
-- Tratamento de mordidas abertas e cruzadas
-- Hábitos deletérios e sua correção
-- Crescimento e desenvolvimento craniofacial
-- Expansão maxilar e aparelhos expansores
-- Técnicas específicas da OFM
+${courseContent.aula2}
 
-Estrutura do curso:
+Estrutura do curso completo:
 ${courseStructure.map(lesson => 
   `${lesson.title}: ${lesson.topics.join(", ")}`
-).join("\n")}`
+).join("\n")}
+
+Suas respostas devem ser claras, precisas e com o rigor técnico esperado para profissionais de odontologia.
+Ao responder, tente identificar de qual aula o conteúdo pertence.`
         },
         { role: "user", content: question }
       ],

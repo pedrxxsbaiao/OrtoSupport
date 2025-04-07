@@ -1,0 +1,66 @@
+import OpenAI from "openai";
+import dotenv from "dotenv";
+
+dotenv.config();
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+// Aqui entram os conteúdos da Aula 1 e Aula 2 (resumidos abaixo por brevidade)
+const aula1 = `
+Aula 1 - Como funciona a Ortopedia Funcional dos Maxilares
+
+A Ortopedia Funcional dos Maxilares (OFM) usa aparelhos ortopédicos funcionais para corrigir disfunções maxilomandibulares. Atua no desenvolvimento ósseo, função muscular e oclusão, diferente da ortodontia, que alinha os dentes.
+
+Objetivos incluem: melhorar mastigação, tratar maloclusões com estímulos funcionais, obter resultados precoces e estáveis, com menos extrações.
+
+Princípios fundamentais: excitação neural, mudança de postura mandibular, e suporte bimaxilar.
+
+Indicações: distoclusão, mordida cruzada, mordida aberta funcional, DTM, etc. Contraindicações: pacientes com distúrbios neuromusculares graves, desvios esqueléticos acentuados, falta de colaboração.
+
+Aparelhos simples permitem movimento livre da mandíbula; compostos guiam a posição mandibular.
+
+A OFM é complementar à ortodontia, e o planejamento adequado é essencial para o sucesso.
+`;
+
+const aula2 = `
+Aula 2 - Mudança de Postura Terapêutica na Ortopedia Funcional dos Maxilares
+
+A mudança de postura terapêutica ajusta a posição mandibular para corrigir Classe II (distoclusão) ou Classe III (mesiooclusão).
+
+Etapas: diagnóstico, montagem do modelo com avanço mandibular (DA), confecção do aparelho, instalação e acompanhamento.
+
+Limite de avanço: máx. 7 mm por vez. Em overjets maiores, usa-se dois aparelhos ou ajustes progressivos.
+
+Formas de mudança de postura: avanço mandibular, lateralização da mandíbula, bloqueio frontal.
+
+Benefícios: correção funcional e estrutural, crescimento equilibrado, melhora mastigatória e respiratória.
+`;
+
+const systemPrompt = `
+Você é o Professor OFM. Responda apenas com base no conteúdo das aulas abaixo.
+Se a informação não estiver disponível nelas, diga: "Essa informação não está disponível na apostila."
+
+Apostila do Curso OFM:
+${aula1}
+
+${aula2}
+`;
+
+const askQuestion = async (userQuestion) => {
+  const response = await openai.chat.completions.create({
+    model: "gpt-4",
+    messages: [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: userQuestion },
+    ],
+    temperature: 0.3,
+  });
+
+  console.log("🧠 Resposta do Professor OFM:\n");
+  console.log(response.choices[0].message.content);
+};
+
+// Exemplo de pergunta
+askQuestion("Qual é a idade ideal para iniciar o tratamento com Ortopedia Funcional?");
