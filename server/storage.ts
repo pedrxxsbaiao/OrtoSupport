@@ -16,8 +16,20 @@ import { db } from "./db";
 import { eq } from "drizzle-orm";
 import connectPg from "connect-pg-simple";
 import session from "express-session";
+import { Pool } from "pg";
 
 const PostgresSessionStore = connectPg(session);
+
+// Configuração do pool PostgreSQL para sessões
+const sessionPool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  },
+  max: 20,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 10000
+});
 
 export interface IStorage {
   // User operations
@@ -48,12 +60,12 @@ export interface IStorage {
 }
 
 export class DatabaseStorage implements IStorage {
-  sessionStore: session.Store;
+  private _sessionStore: session.Store;
 
   constructor() {
-    // Inicializar o armazenamento de sessão com PostgreSQL
-    this.sessionStore = new PostgresSessionStore({
-      conString: process.env.DATABASE_URL,
+    this._sessionStore = new PostgresSessionStore({
+      pool: sessionPool,
+      tableName: 'sessions',
       createTableIfMissing: true
     });
   }
@@ -148,6 +160,10 @@ export class DatabaseStorage implements IStorage {
   
   async listActiveSuggestions(): Promise<Suggestion[]> {
     return await db.select().from(suggestions).where(eq(suggestions.active, true));
+  }
+
+  get sessionStore(): session.Store {
+    return this._sessionStore;
   }
 }
 
