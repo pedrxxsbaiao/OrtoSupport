@@ -17,6 +17,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import ortoLogoPath from "../assets/orto-logo.png";
 
 export default function Home() {
   const { user, logoutMutation } = useAuth();
@@ -139,7 +140,11 @@ export default function Home() {
         {/* Header */}
         <header className="text-center mb-8">
           <div className="flex justify-center mb-4">
-            <img src="/src/assets/logo.svg" alt="OFM Logo" className="h-16" />
+            <img 
+              src={ortoLogoPath} 
+              alt="Orto Logo" 
+              className="h-24 mb-2" 
+            />
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-primary to-amber-500 bg-clip-text text-transparent mb-2">
             Assistente Virtual OFM
