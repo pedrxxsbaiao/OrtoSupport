@@ -138,8 +138,11 @@ export default function Home() {
         
         {/* Header */}
         <header className="text-center mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-primary mb-2">
-            Professor OFM - Assistente Virtual
+          <div className="flex justify-center mb-4">
+            <img src="/src/assets/logo.svg" alt="OFM Logo" className="h-16" />
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-primary to-amber-500 bg-clip-text text-transparent mb-2">
+            Assistente Virtual OFM
           </h1>
           <p className="text-gray-600 max-w-2xl mx-auto">
             Tire suas dúvidas sobre Ortodontia Funcional dos Maxilares com nosso assistente especializado.
