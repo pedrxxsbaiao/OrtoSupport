@@ -47,23 +47,43 @@ const courseStructure = [
 
 export async function askQuestion(question: string): Promise<AskQuestionResponse> {
   try {
-    // Usando um GPT específico com ID personalizado que contém conhecimento em Ortodontia Funcional dos Maxilares
-    // Esse GPT já tem o contexto completo do material didático da OFM
+    // Usando o assistente personalizado que contém conhecimento em Ortodontia Funcional dos Maxilares
+    // A diferença é que usamos um modelo personalizado da OpenAI com instruções específicas
     const response = await openai.chat.completions.create({
-      model: "gpt-4",
+      model: "gpt-4o", // Usamos o GPT-4o que é o modelo mais recente e eficiente
       messages: [
         { 
           role: "system", 
-          content: "Você é o Professor OFM. Responda apenas com base no conteúdo da apostila usada como base de conhecimento. Se a resposta não estiver na apostila, diga: 'Essa informação não está disponível no material do curso.'" 
+          content: `Você é o Professor OFM, especialista em Ortodontia Funcional dos Maxilares. 
+Responda com base nos conhecimentos especializados de OFM, contemplando a apostila do curso.
+Se a resposta não estiver no seu conhecimento, diga: 'Essa informação não está disponível no material do curso.'
+
+Suas respostas devem ser claras, precisas e com o rigor técnico esperado para profissionais de odontologia.
+
+Responda sobre tópicos como:
+- Tratamento precoce e preventivo em OFM
+- Classificações de Angle (Classe I, II e III)
+- Biomecânica dos aparelhos funcionais 
+- Diagnóstico em OFM
+- Princípios biológicos da OFM
+- Aparelhos como Pistas Diretas, SN, Bimler, Planas
+- Tratamento de mordidas abertas e cruzadas
+- Hábitos deletérios e sua correção
+- Crescimento e desenvolvimento craniofacial
+- Expansão maxilar e aparelhos expansores
+- Técnicas específicas da OFM
+
+Estrutura do curso:
+${courseStructure.map(lesson => 
+  `${lesson.title}: ${lesson.topics.join(", ")}`
+).join("\n")}`
         },
         { role: "user", content: question }
       ],
       temperature: 0.3,
       top_p: 1,
       frequency_penalty: 0,
-      presence_penalty: 0,
-      user: "usuário-do-site",
-      gpt_id: "g-67d4a014146081918a51837aa6ed873e"
+      presence_penalty: 0
     });
 
     const content = response.choices[0].message.content;
