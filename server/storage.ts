@@ -16,7 +16,8 @@ import { db } from "./db";
 import { eq } from "drizzle-orm";
 import connectPg from "connect-pg-simple";
 import session from "express-session";
-import { Pool } from "pg";
+import pkg from "pg";
+const { Pool } = pkg;
 
 const PostgresSessionStore = connectPg(session);
 
