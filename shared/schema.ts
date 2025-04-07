@@ -52,14 +52,32 @@ export const feedback = pgTable("feedback", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+// Suggestions Schema
+export const suggestions = pgTable("suggestions", {
+  id: serial("id").primaryKey(),
+  text: text("text").notNull(),
+  category: text("category"),
+  active: boolean("active").default(true).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 export const insertFeedbackSchema = createInsertSchema(feedback).pick({
   questionId: true,
   isHelpful: true,
   comment: true,
 });
 
+export const insertSuggestionSchema = createInsertSchema(suggestions).pick({
+  text: true,
+  category: true,
+  active: true,
+});
+
 export type InsertFeedback = z.infer<typeof insertFeedbackSchema>;
 export type Feedback = typeof feedback.$inferSelect;
+
+export type InsertSuggestion = z.infer<typeof insertSuggestionSchema>;
+export type Suggestion = typeof suggestions.$inferSelect;
 
 // API Request/Response Types
 export type AskQuestionRequest = {
@@ -109,3 +127,10 @@ export type CreateUserRequest = {
 };
 
 export type GetUsersResponse = UserResponse[];
+
+// Suggestion Types
+export type CreateSuggestionRequest = InsertSuggestion;
+export type UpdateSuggestionRequest = InsertSuggestion & { id: number };
+export type GetSuggestionsResponse = Suggestion[];
+export type DeleteUserRequest = { id: number };
+export type DeleteUserResponse = { success: boolean };

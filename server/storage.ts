@@ -1,4 +1,17 @@
-import { users, questions, feedback, type User, type InsertUser, type Question, type InsertQuestion, type Feedback, type InsertFeedback } from "@shared/schema";
+import { 
+  users, 
+  questions, 
+  feedback, 
+  suggestions, 
+  type User, 
+  type InsertUser, 
+  type Question, 
+  type InsertQuestion, 
+  type Feedback, 
+  type InsertFeedback,
+  type Suggestion,
+  type InsertSuggestion
+} from "@shared/schema";
 import { db } from "./db";
 import { eq } from "drizzle-orm";
 import connectPg from "connect-pg-simple";
@@ -12,6 +25,7 @@ export interface IStorage {
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   listUsers(): Promise<User[]>;
+  deleteUser(id: number): Promise<boolean>;
   
   // Question operations
   createQuestion(question: InsertQuestion): Promise<Question>;
@@ -20,6 +34,14 @@ export interface IStorage {
   
   // Feedback operations
   createFeedback(feedback: InsertFeedback): Promise<Feedback>;
+  
+  // Suggestion operations
+  createSuggestion(suggestion: InsertSuggestion): Promise<Suggestion>;
+  updateSuggestion(id: number, suggestion: InsertSuggestion): Promise<Suggestion | undefined>;
+  deleteSuggestion(id: number): Promise<boolean>;
+  getSuggestion(id: number): Promise<Suggestion | undefined>;
+  listSuggestions(): Promise<Suggestion[]>;
+  listActiveSuggestions(): Promise<Suggestion[]>;
   
   // Session store
   sessionStore: session.Store;
@@ -55,6 +77,16 @@ export class DatabaseStorage implements IStorage {
   async listUsers(): Promise<User[]> {
     return await db.select().from(users);
   }
+  
+  async deleteUser(id: number): Promise<boolean> {
+    try {
+      await db.delete(users).where(eq(users.id, id));
+      return true;
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      return false;
+    }
+  }
 
   // Question operations
   async createQuestion(question: InsertQuestion): Promise<Question> {
@@ -78,6 +110,44 @@ export class DatabaseStorage implements IStorage {
   async createFeedback(feedbackData: InsertFeedback): Promise<Feedback> {
     const [result] = await db.insert(feedback).values(feedbackData).returning();
     return result;
+  }
+  
+  // Suggestion operations
+  async createSuggestion(suggestionData: InsertSuggestion): Promise<Suggestion> {
+    const [result] = await db.insert(suggestions).values(suggestionData).returning();
+    return result;
+  }
+  
+  async updateSuggestion(id: number, suggestionData: InsertSuggestion): Promise<Suggestion | undefined> {
+    const [result] = await db
+      .update(suggestions)
+      .set(suggestionData)
+      .where(eq(suggestions.id, id))
+      .returning();
+    return result;
+  }
+  
+  async deleteSuggestion(id: number): Promise<boolean> {
+    try {
+      await db.delete(suggestions).where(eq(suggestions.id, id));
+      return true;
+    } catch (error) {
+      console.error("Error deleting suggestion:", error);
+      return false;
+    }
+  }
+  
+  async getSuggestion(id: number): Promise<Suggestion | undefined> {
+    const [suggestion] = await db.select().from(suggestions).where(eq(suggestions.id, id));
+    return suggestion;
+  }
+  
+  async listSuggestions(): Promise<Suggestion[]> {
+    return await db.select().from(suggestions);
+  }
+  
+  async listActiveSuggestions(): Promise<Suggestion[]> {
+    return await db.select().from(suggestions).where(eq(suggestions.active, true));
   }
 }
 

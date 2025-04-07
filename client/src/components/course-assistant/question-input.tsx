@@ -3,15 +3,27 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Loader2, Send, RefreshCcw, Lightbulb } from "lucide-react";
+import { Loader2, Send, RefreshCcw, Lightbulb, BadgeHelp } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useQuery } from "@tanstack/react-query";
+import { Suggestion } from "@shared/schema";
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogDescription, 
+  DialogHeader, 
+  DialogTitle,
+  DialogTrigger
+} from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 interface QuestionInputProps {
   onSubmit: (question: string) => Promise<void>;
 }
 
-// Exemplos de perguntas para sugestão
-const EXAMPLE_QUESTIONS = [
+// Perguntas de fallback caso não existam sugestões
+const FALLBACK_QUESTIONS = [
   "Qual a diferença entre classe II divisão 1 e classe II divisão 2?",
   "Como funciona a ativação do SN3 para correção de classe III?",
   "Quais são as características clínicas da mordida aberta anterior?",
@@ -22,7 +34,27 @@ export default function QuestionInput({ onSubmit }: QuestionInputProps) {
   const [question, setQuestion] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [suggestionIndex, setSuggestionIndex] = useState(-1);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  
+  // Buscar sugestões do banco de dados
+  const { data: suggestions = [], isLoading: isLoadingSuggestions } = useQuery<Suggestion[]>({
+    queryKey: ["/api/suggestions"],
+    staleTime: 5 * 60 * 1000, // 5 minutos
+  });
+  
+  // Categorias disponíveis
+  const categoriesMap = new Map<string, boolean>();
+  const categories: string[] = [];
+  
+  if (suggestions.length > 0) {
+    suggestions.forEach(suggestion => {
+      if (suggestion.category && suggestion.active && !categoriesMap.has(suggestion.category)) {
+        categoriesMap.set(suggestion.category, true);
+        categories.push(suggestion.category);
+      }
+    });
+  }
 
   // Atualiza o tamanho do textarea automaticamente
   useEffect(() => {
@@ -55,13 +87,19 @@ export default function QuestionInput({ onSubmit }: QuestionInputProps) {
   };
 
   const getRandomSuggestion = () => {
+    // Usa sugestões personalizadas se existirem, caso contrário usa as padrão
+    const activeSuggestions = suggestions.filter(s => s.active);
+    const questionList = activeSuggestions.length > 0 
+      ? activeSuggestions.map(s => s.text)
+      : FALLBACK_QUESTIONS;
+    
     let newIndex;
     do {
-      newIndex = Math.floor(Math.random() * EXAMPLE_QUESTIONS.length);
-    } while (newIndex === suggestionIndex && EXAMPLE_QUESTIONS.length > 1);
+      newIndex = Math.floor(Math.random() * questionList.length);
+    } while (newIndex === suggestionIndex && questionList.length > 1);
     
     setSuggestionIndex(newIndex);
-    setQuestion(EXAMPLE_QUESTIONS[newIndex]);
+    setQuestion(questionList[newIndex]);
   };
 
   return (
@@ -73,25 +111,110 @@ export default function QuestionInput({ onSubmit }: QuestionInputProps) {
               <Label htmlFor="question" className="text-sm font-medium text-gray-700">
                 Sua pergunta sobre OFM
               </Label>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button 
-                      type="button" 
-                      variant="ghost" 
-                      size="sm" 
-                      onClick={getRandomSuggestion}
-                      className="h-8 px-2 text-gray-500 hover:text-primary"
+              <div className="flex space-x-2">
+                {/* Lista completa de sugestões */}
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-8 px-2 border-gray-200"
                     >
-                      <Lightbulb className="h-4 w-4 mr-1" />
-                      <span className="text-xs">Sugestão</span>
+                      <BadgeHelp className="h-4 w-4 mr-1 text-primary" />
+                      <span className="text-xs">Ver todas as sugestões</span>
                     </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p className="text-xs">Clique para ver uma pergunta de exemplo</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[500px]">
+                    <DialogHeader>
+                      <DialogTitle>Sugestões de perguntas</DialogTitle>
+                      <DialogDescription>
+                        Selecione uma pergunta para iniciar sua consulta
+                      </DialogDescription>
+                    </DialogHeader>
+                    <ScrollArea className="h-[300px] rounded-md border p-4">
+                      {isLoadingSuggestions ? (
+                        <div className="flex justify-center p-8">
+                          <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                        </div>
+                      ) : (
+                        <div className="space-y-6">
+                          {categories.length > 0 ? (
+                            categories.map((category) => (
+                              <div key={category} className="space-y-2">
+                                <h3 className="text-sm font-semibold text-primary">{category}</h3>
+                                <ul className="space-y-2">
+                                  {suggestions
+                                    .filter(s => s.active && s.category === category)
+                                    .map((suggestion) => (
+                                      <li 
+                                        key={suggestion.id}
+                                        className="text-sm p-2 rounded hover:bg-gray-100 cursor-pointer transition-colors"
+                                        onClick={() => {
+                                          setQuestion(suggestion.text);
+                                          setShowSuggestions(false);
+                                        }}
+                                      >
+                                        {suggestion.text}
+                                      </li>
+                                    ))
+                                  }
+                                </ul>
+                              </div>
+                            ))
+                          ) : (
+                            <div>
+                              <h3 className="text-sm font-semibold text-primary">Sugestões</h3>
+                              <ul className="space-y-2 mt-2">
+                                {suggestions
+                                  .filter(s => s.active)
+                                  .map((suggestion) => (
+                                    <li 
+                                      key={suggestion.id}
+                                      className="text-sm p-2 rounded hover:bg-gray-100 cursor-pointer transition-colors"
+                                      onClick={() => {
+                                        setQuestion(suggestion.text);
+                                        setShowSuggestions(false);
+                                      }}
+                                    >
+                                      {suggestion.text}
+                                    </li>
+                                  ))
+                                }
+                              </ul>
+                            </div>
+                          )}
+                          {suggestions.filter(s => s.active).length === 0 && (
+                            <p className="text-sm text-gray-500 text-center py-4">
+                              Nenhuma sugestão disponível no momento
+                            </p>
+                          )}
+                        </div>
+                      )}
+                    </ScrollArea>
+                  </DialogContent>
+                </Dialog>
+                
+                {/* Botão de sugestão rápida */}
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button 
+                        type="button" 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={getRandomSuggestion}
+                        className="h-8 px-2 text-gray-500 hover:text-primary"
+                      >
+                        <Lightbulb className="h-4 w-4 mr-1" />
+                        <span className="text-xs">Sugestão</span>
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="text-xs">Clique para ver uma pergunta de exemplo</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
             </div>
             <div className="relative">
               <Textarea
