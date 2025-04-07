@@ -17,10 +17,47 @@ import {
 import { askQuestion } from "./services/openai-service";
 import { z } from "zod";
 import { setupAuth } from "./auth";
+import passport from "passport";
+import { User } from "./types";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Configure a autenticação e as rotas relacionadas
   setupAuth(app);
+
+  // Login endpoint
+  app.post('/api/login', (req, res, next) => {
+    passport.authenticate('local', (err: Error | null, user: User | false, info: { message?: string }) => {
+      if (err) {
+        return next(err);
+      }
+      if (!user) {
+        return res.status(401).json({ message: info.message || 'Falha na autenticação' });
+      }
+      req.logIn(user, (err) => {
+        if (err) {
+          return next(err);
+        }
+        return res.json({ 
+          message: 'Login bem-sucedido',
+          user: {
+            id: user.id,
+            username: user.username,
+            name: user.name,
+            email: user.email,
+            role: user.role
+          }
+        });
+      });
+    })(req, res, next);
+  });
+
+  // Logout endpoint
+  app.post('/api/logout', (req, res) => {
+    req.logout(() => {
+      res.json({ message: 'Logout bem-sucedido' });
+    });
+  });
+
   // Question endpoint - Get answer from ChatGPT
   app.post('/api/question', async (req: Request, res: Response) => {
     try {
@@ -54,16 +91,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         questionId = savedQuestion.id;
       }
       
-      // Incluir o ID da pergunta na resposta, se disponível
       return res.json({
-        ...response,
+        answer: response.answer,
+        lesson: response.lesson,
         questionId
-      });
+      } as AskQuestionResponse);
     } catch (error) {
-      console.error("Error processing question:", error);
-      return res.status(500).json({ 
-        message: error instanceof Error ? error.message : "Erro ao processar sua pergunta" 
-      });
+      console.error('Error in question endpoint:', error);
+      return res.status(500).json({ message: 'Erro interno do servidor' });
     }
   });
 
