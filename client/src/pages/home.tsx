@@ -5,9 +5,10 @@ import HistorySection from "@/components/course-assistant/history-section";
 import { useQuery } from "@tanstack/react-query";
 import { Question } from "@shared/schema";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle, LogOut, UserCircle } from "lucide-react";
+import { AlertCircle, LogOut, UserCircle, Settings } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
+import { useLocation } from "wouter";
 import { 
   DropdownMenu,
   DropdownMenuContent,
@@ -19,6 +20,7 @@ import {
 
 export default function Home() {
   const { user, logoutMutation } = useAuth();
+  const [, navigate] = useLocation();
   const [currentQuestion, setCurrentQuestion] = React.useState<string>("");
   const [currentResponse, setCurrentResponse] = React.useState<{ answer: string; lesson: string, questionId?: number } | null>(null);
   const [showResponse, setShowResponse] = React.useState(false);
@@ -114,10 +116,12 @@ export default function Home() {
               <DropdownMenuLabel>Minha Conta</DropdownMenuLabel>
               <DropdownMenuSeparator />
               {user?.role === "master" && (
-                <DropdownMenuItem asChild>
-                  <a href="/admin" className="cursor-pointer flex items-center gap-2">
-                    Painel de Administração
-                  </a>
+                <DropdownMenuItem
+                  onClick={() => navigate("/admin")}
+                  className="cursor-pointer"
+                >
+                  <Settings className="h-4 w-4 mr-2" />
+                  Painel de Administração
                 </DropdownMenuItem>
               )}
               <DropdownMenuItem 

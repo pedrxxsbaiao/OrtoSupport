@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
 import AuthPage from "@/pages/auth-page";
+import AdminPage from "@/pages/admin-page";
 import { AuthProvider } from "@/hooks/use-auth";
 import { ProtectedRoute, MasterProtectedRoute } from "@/lib/protected-route";
 
@@ -13,6 +14,9 @@ function Router() {
     <Switch>
       {/* Rota protegida para usuários autenticados */}
       <ProtectedRoute path="/" component={Home} />
+      
+      {/* Rota protegida apenas para administradores */}
+      <MasterProtectedRoute path="/admin" component={AdminPage} />
       
       {/* Página de autenticação pública */}
       <Route path="/auth" component={AuthPage} />
