@@ -47,45 +47,58 @@ const courseStructure = [
 
 export async function askQuestion(question: string): Promise<AskQuestionResponse> {
   try {
-    // Build a system prompt with course structure information
-    const systemPrompt = `
-      Você é o Professor OFM, especialista em Ortodontia Funcional dos Maxilares. 
-      Seu papel é responder dúvidas dos alunos com base no conteúdo do curso de OFM.
-      
-      Responda com linguagem técnica apropriada para profissionais de odontologia, mas de forma clara e didática.
-      Sempre que possível, mencione referências científicas e evidências clínicas.
-      
-      IMPORTANTE: Após responder a pergunta, você DEVE identificar em qual aula do curso esse conteúdo é abordado.
-      Indique apenas UMA aula mais relevante relacionada à pergunta.
-      
-      Estrutura do curso:
-      ${courseStructure.map(lesson => 
-        `${lesson.title}: ${lesson.topics.join(", ")}`
-      ).join("\n")}
-      
-      Responda no formato JSON com os seguintes campos:
-      {
-        "answer": "Sua resposta detalhada aqui",
-        "lesson": "Título completo da aula mais relevante (ex: Aula 03 - Classificação das Maloclusões)"
-      }
-    `;
-
+    // Usando um GPT específico com ID personalizado que contém conhecimento em Ortodontia Funcional dos Maxilares
+    // Esse GPT já tem o contexto completo do material didático da OFM
     const response = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4",
       messages: [
-        { role: "system", content: systemPrompt },
+        { 
+          role: "system", 
+          content: "Você é o Professor OFM. Responda apenas com base no conteúdo da apostila usada como base de conhecimento. Se a resposta não estiver na apostila, diga: 'Essa informação não está disponível no material do curso.'" 
+        },
         { role: "user", content: question }
       ],
-      response_format: { type: "json_object" }
+      temperature: 0.3,
+      top_p: 1,
+      frequency_penalty: 0,
+      presence_penalty: 0,
+      user: "usuário-do-site",
+      gpt_id: "g-67d4a014146081918a51837aa6ed873e"
     });
 
     const content = response.choices[0].message.content;
     if (!content) {
       throw new Error("OpenAI returned empty response");
     }
+    
+    // Já que a resposta não virá em formato JSON, vamos mapear para o formato necessário
+    // Tentaremos inferir qual aula do curso é mais relevante com base no conteúdo da resposta
+    let matchedLesson = "Aula 01 - Introdução à Ortodontia Funcional dos Maxilares";
+    
+    // Procura por pistas no conteúdo para identificar a aula relacionada
+    courseStructure.forEach(lesson => {
+      const lowerContent = content.toLowerCase();
+      const lowerTitle = lesson.title.toLowerCase();
+      
+      // Checa se o título da aula está explicitamente mencionado
+      if (lowerContent.includes(lowerTitle.replace(/aula \d+ - /i, '').toLowerCase())) {
+        matchedLesson = lesson.title;
+        return;
+      }
+      
+      // Checa se algum dos tópicos está mencionado
+      lesson.topics.forEach(topic => {
+        if (lowerContent.includes(topic.toLowerCase())) {
+          matchedLesson = lesson.title;
+          return;
+        }
+      });
+    });
 
-    const parsedResponse = JSON.parse(content) as AskQuestionResponse;
-    return parsedResponse;
+    return {
+      answer: content,
+      lesson: matchedLesson
+    };
   } catch (error) {
     console.error("OpenAI API error:", error);
     throw new Error("Falha ao processar sua pergunta. Tente novamente mais tarde.");
