@@ -7,41 +7,17 @@ const openai = new OpenAI({
 });
 
 // Course structure with lesson details for OFM (Ortodontia Funcional dos Maxilares)
+// IMPORTANTE: Somente as aulas 1 e 2 possuem conteúdo detalhado disponível no momento
 const courseStructure = [
   { 
     id: 1, 
-    title: "Aula 01 - Introdução à Ortodontia Funcional dos Maxilares",
-    topics: ["História da OFM", "Princípios básicos", "Diferenças entre Ortodontia Convencional e OFM"]
+    title: "Aula 01 - Como funciona a Ortopedia Funcional dos Maxilares",
+    topics: ["Princípios da OFM", "Objetivos", "Princípios fundamentais", "Indicações e contraindicações", "Tipos de aparelhos"]
   },
   { 
     id: 2, 
-    title: "Aula 02 - Diagnóstico em OFM",
-    topics: ["Anamnese", "Exame clínico", "Documentação ortodôntica", "Análise cefalométrica funcional"]
-  },
-  { 
-    id: 3, 
-    title: "Aula 03 - Classificação das Maloclusões",
-    topics: ["Classe I", "Classe II divisão 1", "Classe II divisão 2", "Classe III", "Mordida aberta", "Mordida cruzada"]
-  },
-  { 
-    id: 4, 
-    title: "Aula 04 - Aparelhos Funcionais",
-    topics: ["Princípios de ação", "Pistas diretas", "SN1, SN2, SN3", "Bimler", "Planas", "Simões Network"]
-  },
-  { 
-    id: 5, 
-    title: "Aula 05 - Tratamento Precoce",
-    topics: ["Tratamento preventivo", "Interceptivo", "Correção de hábitos deletérios", "Expansão maxilar"]
-  },
-  { 
-    id: 6, 
-    title: "Aula 06 - Tratamento da Classe II",
-    topics: ["Aparelhos para Classe II", "Ativadores", "Bionator", "Twin Block", "Herbst", "Jasper Jumper"]
-  },
-  { 
-    id: 7, 
-    title: "Aula 07 - Tratamento da Classe III",
-    topics: ["Aparelhos para Classe III", "Frankel III", "Máscara facial", "Mentoneira", "Expansão associada"]
+    title: "Aula 02 - Mudança de Postura Terapêutica na Ortopedia Funcional dos Maxilares",
+    topics: ["Ajuste da posição mandibular", "Etapas do tratamento", "Limite de avanço", "Formas de mudança de postura", "Benefícios"]
   }
 ];
 
@@ -118,7 +94,7 @@ Ao responder, tente identificar de qual aula o conteúdo pertence.`
     
     // Já que a resposta não virá em formato JSON, vamos mapear para o formato necessário
     // Tentaremos inferir qual aula do curso é mais relevante com base no conteúdo da resposta
-    let matchedLesson = "Aula 01 - Introdução à Ortodontia Funcional dos Maxilares";
+    let matchedLesson = "Aula 01 - Como funciona a Ortopedia Funcional dos Maxilares";
     
     // Procura por pistas no conteúdo para identificar a aula relacionada
     courseStructure.forEach(lesson => {
