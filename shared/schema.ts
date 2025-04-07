@@ -6,11 +6,18 @@ export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   username: text("username").notNull().unique(),
   password: text("password").notNull(),
+  name: text("name").notNull(),
+  role: text("role").default("user").notNull(), // "user" ou "master"
+  email: text("email").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,
+  name: true,
+  role: true,
+  email: true,
 });
 
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -62,6 +69,7 @@ export type AskQuestionRequest = {
 export type AskQuestionResponse = {
   answer: string;
   lesson: string;
+  questionId?: number;
 };
 
 export type SubmitFeedbackRequest = {
@@ -75,3 +83,29 @@ export type SubmitFeedbackResponse = {
 };
 
 export type GetQuestionsResponse = Question[];
+
+// Auth Types
+export type LoginRequest = {
+  username: string;
+  password: string;
+};
+
+export type RegisterRequest = {
+  username: string;
+  password: string;
+  name: string;
+  email: string;
+};
+
+export type UserResponse = Omit<User, "password">;
+
+// User Management Types (for master user)
+export type CreateUserRequest = {
+  username: string;
+  password: string;
+  name: string;
+  email: string;
+  role: string;
+};
+
+export type GetUsersResponse = UserResponse[];

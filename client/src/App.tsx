@@ -4,13 +4,20 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
+import AuthPage from "@/pages/auth-page";
+import { AuthProvider } from "@/hooks/use-auth";
+import { ProtectedRoute, MasterProtectedRoute } from "@/lib/protected-route";
 
 function Router() {
   return (
     <Switch>
-      {/* Add pages below */}
-      <Route path="/" component={Home}/>
-      {/* Fallback to 404 */}
+      {/* Rota protegida para usuários autenticados */}
+      <ProtectedRoute path="/" component={Home} />
+      
+      {/* Página de autenticação pública */}
+      <Route path="/auth" component={AuthPage} />
+      
+      {/* Fallback para página 404 */}
       <Route component={NotFound} />
     </Switch>
   );
@@ -19,8 +26,10 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <Router />
-      <Toaster />
+      <AuthProvider>
+        <Router />
+        <Toaster />
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

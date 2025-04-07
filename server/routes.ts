@@ -1,13 +1,16 @@
-import type { Express } from "express";
+import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { AskQuestionRequest, AskQuestionResponse, SubmitFeedbackRequest, SubmitFeedbackResponse, insertQuestionSchema, insertFeedbackSchema } from "@shared/schema";
 import { askQuestion } from "./services/openai-service";
 import { z } from "zod";
+import { setupAuth } from "./auth";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Configure a autenticação e as rotas relacionadas
+  setupAuth(app);
   // Question endpoint - Get answer from ChatGPT
-  app.post('/api/question', async (req, res) => {
+  app.post('/api/question', async (req: Request, res: Response) => {
     try {
       // Validate request
       const questionSchema = z.object({
@@ -27,18 +30,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Get response from OpenAI
       const response = await askQuestion(question);
       
-      // Save question in storage (optionally tied to a user if authenticated)
-      const userId = req.session?.user?.id; // Optional, depends on authentication setup
-      if (userId) {
-        await storage.createQuestion({
+      // Save question in storage if user is authenticated
+      let questionId: number | undefined;
+      if (req.isAuthenticated() && req.user) {
+        const savedQuestion = await storage.createQuestion({
           question,
           answer: response.answer,
           lesson: response.lesson,
-          userId
+          userId: req.user.id
         });
+        questionId = savedQuestion.id;
       }
       
-      return res.json(response);
+      // Incluir o ID da pergunta na resposta, se disponível
+      return res.json({
+        ...response,
+        questionId
+      });
     } catch (error) {
       console.error("Error processing question:", error);
       return res.status(500).json({ 
@@ -48,15 +56,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get user's question history
-  app.get('/api/questions', async (req, res) => {
+  app.get('/api/questions', async (req: Request, res: Response) => {
     try {
-      const userId = req.session?.user?.id;
-      
-      if (!userId) {
+      if (!req.isAuthenticated() || !req.user) {
         return res.status(401).json({ message: "Não autenticado" });
       }
       
-      const questions = await storage.getQuestionsByUserId(userId);
+      const questions = await storage.getQuestionsByUserId(req.user.id);
       return res.json(questions);
     } catch (error) {
       console.error("Error getting questions:", error);
@@ -67,7 +73,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Submit feedback for a question
-  app.post('/api/feedback', async (req, res) => {
+  app.post('/api/feedback', async (req: Request, res: Response) => {
     try {
       // Validate request
       const feedbackSchema = z.object({
