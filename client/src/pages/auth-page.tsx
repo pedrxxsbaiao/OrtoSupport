@@ -88,9 +88,13 @@ export default function AuthPage() {
       <div className="w-full md:w-1/2 p-4 flex items-center justify-center">
         <div className="w-full max-w-md">
           <div className="mb-8 text-center">
-            <h1 className="text-3xl font-bold tracking-tight">Assistente OFM</h1>
+            <h1 className="text-3xl font-bold tracking-tight">Assistente de Curso OFM</h1>
             <p className="text-muted-foreground mt-2">
-              Acesse sua conta para começar a usar o assistente de curso
+              - Suas dúvidas respondidas na palma da mão 24 horas por dia
+              <br />
+              - Um App exclusivo com a base de dados com os conceitos exclusivos do Prof.Hélio e Prof.Flávia Venâncio
+              <br />
+              - Identifique imediatamente a fonte da resposta, assista a aula e aprimore seu conhecimento
             </p>
           </div>
 
