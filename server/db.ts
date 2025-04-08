@@ -14,4 +14,20 @@ const pool = new Pool({
   connectionTimeoutMillis: 10000
 });
 
+// Adiciona handler de erro ao pool
+pool.on('error', (err) => {
+  console.error('Unexpected error on idle client', err);
+  process.exit(-1);
+});
+
+// Testa a conexão com o banco de dados
+pool.connect((err, client, release) => {
+  if (err) {
+    console.error('Error connecting to the database:', err);
+    process.exit(-1);
+  }
+  console.log('Successfully connected to the database');
+  release();
+});
+
 export const db = drizzle(pool, { schema });
