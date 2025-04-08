@@ -149,13 +149,6 @@ export default function Home() {
           <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-primary to-amber-500 bg-clip-text text-transparent mb-2">
             Assistente Virtual OFM
           </h1>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            - Suas dúvidas respondidas na palma da mão 24 horas por dia
-            <br />
-            - Um App exclusivo com a base de dados com os conceitos exclusivos do Prof.Hélio e Prof.Flávia Venâncio
-            <br />
-            - Identifique imediatamente a fonte da resposta, assista a aula e aprimore seu conhecimento
-          </p>
         </header>
         
         {/* Question Input */}
