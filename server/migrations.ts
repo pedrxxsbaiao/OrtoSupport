@@ -52,11 +52,24 @@ export async function runMigrations() {
         description TEXT NOT NULL,
         active BOOLEAN NOT NULL DEFAULT true,
         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-        content TEXT NOT NULL
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
       );
     `);
     console.log('Suggestions table created');
+
+    // Adicionar coluna content à tabela de sugestões se não existir
+    await db.execute(sql`
+      DO $$ 
+      BEGIN
+        IF NOT EXISTS (
+          SELECT 1 FROM information_schema.columns 
+          WHERE table_name = 'suggestions' AND column_name = 'content'
+        ) THEN
+          ALTER TABLE suggestions ADD COLUMN content TEXT NOT NULL DEFAULT '';
+        END IF;
+      END $$;
+    `);
+    console.log('Content column added to suggestions table');
 
     // Criar tabela de sessões
     await db.execute(sql`
