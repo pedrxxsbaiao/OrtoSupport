@@ -150,7 +150,11 @@ export default function Home() {
             Assistente Virtual OFM
           </h1>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            Tire suas dúvidas sobre Ortodontia Funcional dos Maxilares com nosso assistente especializado.
+            - Suas dúvidas respondidas na palma da mão 24 horas por dia
+            <br />
+            - Um App exclusivo com a base de dados com os conceitos exclusivos do Prof.Hélio e Prof.Flávia Venâncio
+            <br />
+            - Identifique imediatamente a fonte da resposta, assista a aula e aprimore seu conhecimento
           </p>
         </header>
         
