@@ -20,14 +20,14 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      "@": path.resolve(import.meta.dirname, "client", "src"),
-      "@shared": path.resolve(import.meta.dirname, "shared"),
-      "@assets": path.resolve(import.meta.dirname, "attached_assets"),
+      "@": path.join(process.cwd(), "client", "src"),
+      "@shared": path.join(process.cwd(), "shared"),
+      "@assets": path.join(process.cwd(), "attached_assets"),
     },
   },
-  root: path.resolve(import.meta.dirname, "client"),
+  root: path.join(process.cwd(), "client"),
   build: {
-    outDir: path.resolve(import.meta.dirname, "dist/public"),
+    outDir: path.join(process.cwd(), "dist/public"),
     emptyOutDir: true,
   },
 });
