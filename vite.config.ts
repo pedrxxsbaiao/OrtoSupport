@@ -4,6 +4,8 @@ import themePlugin from "@replit/vite-plugin-shadcn-theme-json";
 import path from "path";
 import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
 
+const rootDir = process.cwd();
+
 export default defineConfig({
   plugins: [
     react(),
@@ -20,14 +22,14 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      "@": path.join(process.cwd(), "client", "src"),
-      "@shared": path.join(process.cwd(), "shared"),
-      "@assets": path.join(process.cwd(), "attached_assets"),
+      "@": path.resolve(rootDir, "client", "src"),
+      "@shared": path.resolve(rootDir, "shared"),
+      "@assets": path.resolve(rootDir, "attached_assets"),
     },
   },
-  root: path.join(process.cwd(), "client"),
+  root: path.resolve(rootDir, "client"),
   build: {
-    outDir: path.join(process.cwd(), "dist/public"),
+    outDir: path.resolve(rootDir, "dist/public"),
     emptyOutDir: true,
   },
 });
