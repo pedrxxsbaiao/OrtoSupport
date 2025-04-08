@@ -147,18 +147,14 @@ export default function Home() {
             />
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-primary to-amber-500 bg-clip-text text-transparent mb-2">
-            Assistente de Curso OFM
+            Assistente Virtual OFM
           </h1>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            Uma ferramenta de apoio educacional para estudantes de Ortodontia Funcional dos Maxilares.
-            <br /><br />
-            - Tire dúvidas sobre conceitos ortodônticos
+            - Suas dúvidas respondidas na palma da mão 24 horas por dia
             <br />
-            - Encontre informações específicas sobre técnicas e procedimentos
+            - Um App exclusivo com a base de dados com os conceitos exclusivos do Prof.Hélio e Prof.Flávia Venâncio
             <br />
-            - Identifique quais lições contêm o conhecimento necessário
-            <br />
-            - Aprimore seu aprendizado com respostas personalizadas
+            - Identifique imediatamente a fonte da resposta, assista a aula e aprimore seu conhecimento
           </p>
         </header>
         
