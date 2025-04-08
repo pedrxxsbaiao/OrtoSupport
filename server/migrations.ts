@@ -59,12 +59,25 @@ export async function runMigrations() {
 
     // Criar tabela de sessões
     await db.execute(sql`
-      CREATE TABLE IF NOT EXISTS "session" (
-        "sid" varchar NOT NULL COLLATE "default",
-        "sess" json NOT NULL,
-        "expire" timestamp(6) NOT NULL,
-        CONSTRAINT "session_pkey" PRIMARY KEY ("sid")
-      );
+      DO $$ 
+      BEGIN
+        -- Verificar se a tabela existe
+        IF NOT EXISTS (SELECT FROM pg_tables WHERE tablename = 'session') THEN
+          CREATE TABLE "session" (
+            "sid" varchar NOT NULL COLLATE "default",
+            "sess" json NOT NULL,
+            "expire" timestamp(6) NOT NULL
+          );
+        END IF;
+
+        -- Verificar se a constraint existe
+        IF NOT EXISTS (
+          SELECT 1 FROM pg_constraint 
+          WHERE conname = 'session_pkey'
+        ) THEN
+          ALTER TABLE "session" ADD CONSTRAINT "session_pkey" PRIMARY KEY ("sid");
+        END IF;
+      END $$;
     `);
     console.log('Session table created');
 
