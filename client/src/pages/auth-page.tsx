@@ -184,7 +184,7 @@ export default function AuthPage() {
                   clipRule="evenodd"
                 />
               </svg>
-              <span>Tire dúvidas sobre conceitos ortodônticos</span>
+              <span>Suas dúvidas respondidas na palma da mão 24 horas por dia</span>
             </li>
             <li className="flex items-start">
               <svg
@@ -199,7 +199,7 @@ export default function AuthPage() {
                   clipRule="evenodd"
                 />
               </svg>
-              <span>Encontre informações específicas sobre técnicas e procedimentos</span>
+              <span>Um App exclusivo com a base de dados com os conceitos exclusivos do Prof.Hélio e Prof.Flávia Venâncio</span>
             </li>
             <li className="flex items-start">
               <svg
@@ -214,7 +214,7 @@ export default function AuthPage() {
                   clipRule="evenodd"
                 />
               </svg>
-              <span>Identifique quais lições contêm o conhecimento necessário</span>
+              <span>Identifique imediatamente a fonte da resposta, assista a aula e aprimore seu conhecimento</span>
             </li>
             <li className="flex items-start">
               <svg
