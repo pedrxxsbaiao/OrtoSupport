@@ -52,7 +52,8 @@ export async function runMigrations() {
         description TEXT NOT NULL,
         active BOOLEAN NOT NULL DEFAULT true,
         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        content TEXT NOT NULL
       );
     `);
     console.log('Suggestions table created');
@@ -80,6 +81,32 @@ export async function runMigrations() {
       END $$;
     `);
     console.log('Session table created');
+
+    // Inserir sugestão sobre indicações da ortopedia funcional dos maxilares
+    await db.execute(sql`
+      INSERT INTO suggestions (title, description, content, active)
+      VALUES (
+        'Indicações da Ortopedia Funcional dos Maxilares',
+        'Principais indicações e aplicações da ortopedia funcional dos maxilares',
+        'A ortopedia funcional dos maxilares é indicada para:
+
+1. Correção de maloclusões em crianças e adolescentes
+2. Tratamento de problemas de crescimento facial
+3. Correção de hábitos deletérios (sucção digital, respiração bucal)
+4. Melhora da função mastigatória
+5. Estímulo do crescimento mandibular
+6. Correção de mordida cruzada posterior
+7. Tratamento de apinhamento dentário
+8. Melhora da estética facial
+9. Correção de problemas de ATM
+10. Tratamento de distúrbios do sono relacionados à respiração
+
+É importante ressaltar que o tratamento deve ser iniciado precocemente, preferencialmente durante a fase de crescimento, para obter melhores resultados.',
+        true
+      )
+      ON CONFLICT DO NOTHING;
+    `);
+    console.log('Sample suggestion inserted');
 
     console.log('All migrations completed successfully');
   } catch (error) {
