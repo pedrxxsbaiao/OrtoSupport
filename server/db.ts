@@ -7,8 +7,8 @@ const queryClient = postgres(process.env.DATABASE_URL!, {
   ssl: {
     rejectUnauthorized: false
   },
-  max: 20,
-  idle_timeout: 30,
+  max: 1,
+  idle_timeout: 20,
   connect_timeout: 10
 });
 
