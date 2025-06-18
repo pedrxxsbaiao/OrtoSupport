@@ -11,7 +11,7 @@ services:
       - key: NODE_ENV
         value: production
       - key: DATABASE_URL
-        sync: false
+        value: postgresql://teste_hmr1_user:h2tqlxv3hREhnjxsDVimXkJ7SrYx5wxJ@dpg-d19c42ffte5s73c93khg-a/teste_hmr1
       - key: OPENAI_API_KEY
         sync: false
     healthCheckPath: /
